@@ -1,0 +1,2 @@
+out.product_id = in.product_id;
+out.total_sales = in.units_sold;

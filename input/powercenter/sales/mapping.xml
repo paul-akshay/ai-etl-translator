@@ -1,0 +1,20 @@
+<WORKFLOW NAME="sales_workflow">
+
+<SOURCE NAME="sales_file">
+    <FIELD NAME="product_id" TYPE="string"/>
+    <FIELD NAME="category" TYPE="string"/>
+    <FIELD NAME="units_sold" TYPE="integer"/>
+</SOURCE>
+
+<TRANSFORMATION NAME="filter_category" TYPE="Filter">
+    <CONDITION>category='Electronics'</CONDITION>
+</TRANSFORMATION>
+
+<TRANSFORMATION NAME="aggregate_sales" TYPE="Aggregator">
+    <GROUPBY>product_id</GROUPBY>
+    <AGGREGATE>SUM(units_sold)</AGGREGATE>
+</TRANSFORMATION>
+
+<TARGET NAME="sales_summary"/>
+
+</WORKFLOW>

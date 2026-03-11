@@ -1,0 +1,2 @@
+out.hotel_id = in.hotel_id;
+out.total_revenue = sum(in.total_price);

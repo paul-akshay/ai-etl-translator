@@ -1,0 +1,32 @@
+<WORKFLOW NAME="hotel_booking_workflow">
+
+<SOURCE NAME="booking_file">
+    <FIELD NAME="booking_id" TYPE="string"/>
+    <FIELD NAME="hotel_id" TYPE="string"/>
+    <FIELD NAME="city" TYPE="string"/>
+    <FIELD NAME="booking_status" TYPE="string"/>
+    <FIELD NAME="booking_date" TYPE="date"/>
+    <FIELD NAME="nights" TYPE="integer"/>
+    <FIELD NAME="total_price" TYPE="double"/>
+</SOURCE>
+
+<TRANSFORMATION NAME="filter_confirmed_bookings" TYPE="Filter">
+    <CONDITION>booking_status='CONFIRMED'</CONDITION>
+</TRANSFORMATION>
+
+<TRANSFORMATION NAME="filter_city_vancouver" TYPE="Filter">
+    <CONDITION>city='Vancouver'</CONDITION>
+</TRANSFORMATION>
+
+<TRANSFORMATION NAME="filter_min_stay" TYPE="Filter">
+    <CONDITION>nights >= 2</CONDITION>
+</TRANSFORMATION>
+
+<TRANSFORMATION NAME="aggregate_revenue" TYPE="Aggregator">
+    <GROUPBY>hotel_id</GROUPBY>
+    <AGGREGATE>SUM(total_price)</AGGREGATE>
+</TRANSFORMATION>
+
+<TARGET NAME="hotel_revenue_summary"/>
+
+</WORKFLOW>

@@ -1,0 +1,5 @@
+record
+    string product_id;
+    string category;
+    integer units_sold;
+end;
