@@ -1,43 +1,11 @@
 # AI ETL Translator
 
+**Note: Created for POC. Models are not fully trained**
+
 AI-powered tool that converts **legacy ETL workflows** (PowerCenter, Ab Initio) into a **canonical metadata model** and generates **modern ETL code**.
 
 The project uses **LLM-assisted parsing + LangGraph workflows** to translate legacy ETL definitions
 
-Note: Still in Development Mode
-
-
-# Overview
-
-The system performs two main tasks:
-
-### 1️⃣ Metadata Extraction
-Legacy ETL artifacts are parsed and converted into **canonical metadata**.
-
-### 2️⃣ ETL Code Generation
-The canonical metadata is used to generate **Spark Scala ETL code** (more code generators to be implemented).
-
----
-
-# Supported Legacy ETL Frameworks
-
-| Framework | Status            |
-|---|-------------------|
-PowerCenter | ✅ Minimal Support |
-Ab Initio | ✅ Minimal Support       |
-
----
-
-# Architecture
-
-The pipeline follows this flow:
-# AI ETL Translator
-
-AI-powered tool that converts **legacy ETL workflows** (PowerCenter, Ab Initio) into a **canonical metadata model** and generates **modern Spark ETL code**.
-
-The project uses **LLM-assisted parsing + LangGraph workflows** to translate legacy ETL definitions into modern data processing pipelines.
-
----
 
 # Overview
 
@@ -51,18 +19,12 @@ The canonical metadata is used to generate **Spark Scala ETL code**.
 
 ---
 
-# Supported ETL Frameworks
+# Supported Legacy ETL Frameworks
 
 | Framework | Status |
 |---|---|
-PowerCenter | ✅ Supported |
-Ab Initio | ✅ Supported |
-
-Future extensions could include:
-
-- Talend
-- SSIS
-- DataStage
+PowerCenter | ✅ Minimal Support |
+Ab Initio | ✅ Minimal Support |
 
 ---
 
