@@ -1,0 +1,9 @@
+record
+    string booking_id;
+    string hotel_id;
+    string city;
+    string booking_status;
+    date booking_date;
+    integer nights;
+    decimal total_price;
+end;

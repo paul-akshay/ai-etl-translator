@@ -1,54 +1,87 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 from langgraph.graph import StateGraph
 
-from parser import xml_to_metadata
-from spark_code_generator import generate_spark_code
+from parsers.powercenter_parser import pc_to_metadata
+from parsers.abinitio_parser import abinitio_to_metadata
+from codegenerators.spark_code_generator import generate_spark_code
 
+# import constants from main
+from config import PARSER_CHOSEN
+from constants import (AB_INITIO, POWERCENTER)
 
-from typing import TypedDict
+# ---------------------------
+# STATE DEFINITIONS
+# ---------------------------
 
-class GraphState(TypedDict):
-    xml: str
+class MetadataState(TypedDict, total=False):
+    xml: Optional[str]
+    graph: Optional[str]
+    schema: Optional[str]
+    transform: Optional[str]
     metadata: dict
-    approved: bool
+
+
+class ETLState(TypedDict):
+    metadata: dict
     spark_code: str
 
 
-def parser_agent(state):
+# ---------------------------
+# PARSER NODE
+# ---------------------------
 
-    metadata = xml_to_metadata(state["xml"])
+def parser_node(state: MetadataState):
 
-    return {"metadata": metadata}
+    if PARSER_CHOSEN == POWERCENTER:
 
-def approval_node(state):
+        metadata = pc_to_metadata(state["xml"])
 
-    print("\nGenerated Canonical Metadata:\n")
-    print(state["metadata"])
+    elif PARSER_CHOSEN == AB_INITIO:
 
-    approval = input("\nApprove metadata? (y/n): ")
+        metadata = abinitio_to_metadata(
+            state["graph"],
+            state["schema"],
+            state["transform"]
+        )
 
-    if approval.lower() == "y":
-        return {"approved": True}
     else:
-        raise Exception("Metadata rejected. Stopping workflow.")
+        raise Exception("Invalid parser selected")
+
+    return {
+        "metadata": metadata
+    }
 
 
-def spark_generator_node(state):
+# ---------------------------
+# METADATA WORKFLOW
+# ---------------------------
+
+metadata_workflow = StateGraph(MetadataState)
+
+metadata_workflow.add_node("parser", parser_node)
+
+metadata_workflow.set_entry_point("parser")
+
+metadata_app = metadata_workflow.compile()
+
+
+# ---------------------------
+# ETL WORKFLOW
+# ---------------------------
+
+def spark_generator_node(state: ETLState):
 
     spark_code = generate_spark_code(state["metadata"])
 
-    return {"spark_code": spark_code}
+    return {
+        "spark_code": spark_code
+    }
 
 
-workflow = StateGraph(GraphState)
+etl_workflow = StateGraph(ETLState)
 
-workflow.add_node("parser", parser_agent)
-workflow.add_node("approval", approval_node)
-workflow.add_node("spark_generator", spark_generator_node)
+etl_workflow.add_node("spark_generator", spark_generator_node)
 
-workflow.set_entry_point("parser")
+etl_workflow.set_entry_point("spark_generator")
 
-workflow.add_edge("parser", "approval")
-workflow.add_edge("approval", "spark_generator")
-
-app = workflow.compile()
+etl_app = etl_workflow.compile()
