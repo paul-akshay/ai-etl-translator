@@ -1,0 +1,80 @@
+{
+  "workflow_name": "hotel_booking_workflow",
+  "extractor": {
+    "name": "read_bookings",
+    "path": "file://input-bookings.csv",
+    "type": "csv",
+    "schema": [
+      {
+        "name": "booking_id",
+        "datatype": "string"
+      },
+      {
+        "name": "hotel_id",
+        "datatype": "string"
+      },
+      {
+        "name": "city",
+        "datatype": "string"
+      },
+      {
+        "name": "booking_status",
+        "datatype": "string"
+      },
+      {
+        "name": "booking_date",
+        "datatype": "date"
+      },
+      {
+        "name": "nights",
+        "datatype": "integer"
+      },
+      {
+        "name": "total_price",
+        "datatype": "decimal"
+      }
+    ]
+  },
+  "transformers": [
+    {
+      "name": "filter_confirmed",
+      "type": "Filter",
+      "condition": "booking_status == \"CONFIRMED\"",
+      "group_by": [],
+      "aggregations": []
+    },
+    {
+      "name": "filter_city",
+      "type": "Filter",
+      "condition": "city == \"Vancouver\"",
+      "group_by": [],
+      "aggregations": []
+    },
+    {
+      "name": "filter_min_stay",
+      "type": "Filter",
+      "condition": "nights >= 2",
+      "group_by": [],
+      "aggregations": []
+    },
+    {
+      "name": "aggregate_revenue",
+      "type": "Aggregator",
+      "condition": "",
+      "group_by": [
+        "hotel_id"
+      ],
+      "aggregations": [
+        {
+          "function": "SUM",
+          "column": "total_price",
+          "alias": "total_revenue"
+        }
+      ]
+    }
+  ],
+  "loader": {
+    "path": "file://output-hotel_revenue_summary.csv",
+    "type": "csv"
+  }
+}
